@@ -1,0 +1,274 @@
+UserRegister.java
+package com.example.a42214.userregister;
+
+import android.support.annotation.IdRes;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.content.Intent;
+
+public class UserRegister extends AppCompatActivity implements View.OnClickListener,RadioGroup.OnCheckedChangeListener{
+    //定义变量
+    private String str_phone="",str_pwd="";
+    private String str_sex="男生";
+    private String str_hobby="";
+    private String str_city="";
+    private String str_result="";
+    private String[]city={"北京","上海","广州","深圳"};
+
+    //组件定义
+    private EditText phoneno,pwd;
+    private RadioGroup rgSex;
+    private RadioButton rbMale,rbFemale;
+    private CheckBox read,ball,music;
+    private Spinner spinner;
+    private Button button;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_register);
+        init();
+
+    }
+
+    private void init() {
+        phoneno=(EditText)findViewById(R.id.phoneno);
+        pwd=(EditText)findViewById(R.id.pwd);
+        rgSex=(RadioGroup)findViewById(R.id.rgSex);
+        rgSex.setOnCheckedChangeListener(this);
+        rbMale=(RadioButton)findViewById(R.id.rbMale);
+        rbFemale=(RadioButton)findViewById(R.id.rbFemale);
+        read=(CheckBox)findViewById(R.id.read);
+        ball=(CheckBox)findViewById(R.id.ball);
+        music=(CheckBox)findViewById(R.id.music);
+        spinner=(Spinner)findViewById(R.id.spinner);
+        button=(Button)findViewById(R.id.button);
+        button.setOnClickListener(this);
+        ArrayAdapter adapter=new ArrayAdapter(this,android.R.layout.simple_expandable_list_item_1,
+                city);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                str_city=city[position];
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+    switch (v.getId()){
+        case R.id.button:
+            str_hobby="";
+            str_phone=phoneno.getText().toString();
+            str_pwd=pwd.getText().toString();
+            if(read.isChecked())
+                str_hobby+=read.getText().toString()+" ";
+            if(ball.isChecked())
+                str_hobby+=ball.getText().toString()+" ";
+            if(music.isChecked())
+                str_hobby+=music.getText().toString()+" ";
+
+            Intent intent=new Intent(UserRegister.this,ResultActivity.class);
+            Bundle bundle=new Bundle();
+            bundle.putString("phone",str_phone);
+            bundle.putString("pwd",str_pwd);
+            bundle.putString("sex",str_sex);
+            bundle.putString("hobby",str_hobby);
+            bundle.putString("city",str_city);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            break;
+
+     }
+
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+    if(checkedId==R.id.rbMale) {
+        str_sex = "男生";
+        }else{
+        str_sex="女生";
+        }
+    }
+}
+
+ResultActivity.java
+package com.example.a42214.userregister;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.content.Intent;
+
+public class ResultActivity extends AppCompatActivity {
+    TextView Result;
+    String result;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result);
+        Result=(TextView)findViewById(R.id.Result);
+        Intent intent=this.getIntent();
+        Bundle bundle=new Bundle();
+        bundle=intent.getExtras();
+        result="手机号是："+bundle.getString("phone")+"\n"+
+                "密码是："+bundle.getString("pwd")+"\n"+
+                "性别是："+bundle.getString("sex")+"\n"+
+                "爱好是："+bundle.getString("hobby")+"\n"+
+                "城市是："+bundle.getString("city")+"\n";
+        Result.setText(result);
+
+    }
+}
+
+Activity_register.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机号："
+            android:textColor="@android:color/black"
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="6dp" />
+        <EditText
+            android:id="@+id/phoneno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="6dp"
+            android:hint="请输入手机号"
+            android:inputType="text" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码："
+            android:textSize="20dp"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="6dp" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="6dp"
+            android:hint="请输入密码"
+            android:id="@+id/pwd"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:id="@+id/rgSex"
+ >
+        <RadioButton
+            android:id="@+id/rbMale"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:checked="true"
+            android:text="男"
+            android:textSize="15dp"/>
+        <RadioButton
+            android:id="@+id/rbFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:text="女"
+            android:textSize="15dp"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40dp">
+        <CheckBox
+            android:id="@+id/read"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="读书"
+            android:textSize="18dp"
+            android:layout_marginLeft="6dp"
+            />
+        <CheckBox
+            android:id="@+id/ball"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="打球"
+            android:textSize="18dp"
+            android:layout_marginLeft="6dp"/>
+        <CheckBox
+            android:id="@+id/music"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="听音乐"
+            android:textSize="18dp"
+            android:layout_marginLeft="6dp"/>
+    </LinearLayout>
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:entries="@array/city_name"
+        android:id="@+id/spinner">
+        </Spinner>
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="注册"
+        android:textSize="20dp"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimaryDark"
+        android:layout_gravity="center" />
+
+</LinearLayout>
+
+Result.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/Result"/>
+
+</LinearLayout>
+
