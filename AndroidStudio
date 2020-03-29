@@ -1,0 +1,113 @@
+UserRegister.java
+package com.example.a42214.userregister;
+
+import android.support.annotation.IdRes;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.content.Intent;
+
+public class UserRegister extends AppCompatActivity implements View.OnClickListener,RadioGroup.OnCheckedChangeListener{
+    //定义变量
+    private String str_phone="",str_pwd="";
+    private String str_sex="男生";
+    private String str_hobby="";
+    private String str_city="";
+    private String str_result="";
+    private String[]city={"北京","上海","广州","深圳"};
+
+    //组件定义
+    private EditText phoneno,pwd;
+    private RadioGroup rgSex;
+    private RadioButton rbMale,rbFemale;
+    private CheckBox read,ball,music;
+    private Spinner spinner;
+    private Button button;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_register);
+        init();
+
+    }
+
+    private void init() {
+        phoneno=(EditText)findViewById(R.id.phoneno);
+        pwd=(EditText)findViewById(R.id.pwd);
+        rgSex=(RadioGroup)findViewById(R.id.rgSex);
+        rgSex.setOnCheckedChangeListener(this);
+        rbMale=(RadioButton)findViewById(R.id.rbMale);
+        rbFemale=(RadioButton)findViewById(R.id.rbFemale);
+        read=(CheckBox)findViewById(R.id.read);
+        ball=(CheckBox)findViewById(R.id.ball);
+        music=(CheckBox)findViewById(R.id.music);
+        spinner=(Spinner)findViewById(R.id.spinner);
+        button=(Button)findViewById(R.id.button);
+        button.setOnClickListener(this);
+        ArrayAdapter adapter=new ArrayAdapter(this,android.R.layout.simple_expandable_list_item_1,
+                city);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                str_city=city[position];
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+    switch (v.getId()){
+        case R.id.button:
+            str_hobby="";
+            str_phone=phoneno.getText().toString();
+            str_pwd=pwd.getText().toString();
+            if(read.isChecked())
+                str_hobby+=read.getText().toString()+" ";
+            if(ball.isChecked())
+                str_hobby+=ball.getText().toString()+" ";
+            if(music.isChecked())
+                str_hobby+=music.getText().toString()+" ";
+
+            Intent intent=new Intent(UserRegister.this,ResultActivity.class);
+            Bundle bundle=new Bundle();
+            bundle.putString("phone",str_phone);
+            bundle.putString("pwd",str_pwd);
+            bundle.putString("sex",str_sex);
+            bundle.putString("hobby",str_hobby);
+            bundle.putString("city",str_city);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            break;
+
+     }
+
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+    if(checkedId==R.id.rbMale) {
+        str_sex = "男生";
+        }else{
+        str_sex="女生";
+        }
+    }
+}
